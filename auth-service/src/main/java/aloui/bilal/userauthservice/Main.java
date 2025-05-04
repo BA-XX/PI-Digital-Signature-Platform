@@ -1,39 +1,26 @@
 
 package aloui.bilal.userauthservice;
 
-
-import aloui.bilal.userauthservice.service.AuthService;
+import aloui.bilal.userauthservice.service.auth.AuthService;
 import io.helidon.config.Config;
 import io.helidon.logging.common.LogConfig;
 import io.helidon.webserver.WebServer;
 import io.helidon.webserver.http.HttpRouting;
 
-/**
- * The application main class.
- */
 public class Main {
 
 
-    /**
-     * Cannot be instantiated.
-     */
     private Main() {
     }
 
 
-    /**
-     * Application main entry point.
-     *
-     * @param args command line arguments.
-     */
-
-    public static void main(String[] args) {
-
-        // load logging configuration
-        LogConfig.configureRuntime();
+    public static void main(String[] args) throws Exception {
 
         // initialize global config from default configuration
         Config config = Config.create();
+
+        // load logging configuration
+        LogConfig.configureRuntime();
 
         WebServer server = WebServer.builder()
                 .config(config.get("server"))
@@ -46,10 +33,6 @@ public class Main {
 
     }
 
-
-    /**
-     * Updates HTTP Routing.
-     */
     static void routing(HttpRouting.Builder routing) {
 
         routing
