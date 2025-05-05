@@ -1,27 +1,31 @@
-package aloui.bilal.userauthservice.service.auth;
+package aloui.bilal.userauthservice.service.auth.handlers;
 
 import aloui.bilal.userauthservice.security.JwtUtil;
-import io.helidon.http.HeaderNames;
 import io.helidon.webserver.http.Handler;
 import io.helidon.webserver.http.ServerRequest;
 import io.helidon.webserver.http.ServerResponse;
 import jakarta.json.Json;
+import jakarta.json.JsonObject;
+
+import java.util.Optional;
 
 public class AuthMiddleware implements Handler {
 
     @Override
     public void handle(ServerRequest req, ServerResponse res) throws Exception {
-        String authHeader = req.headers().first(HeaderNames.create("Authorization")).orElse(null);
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            res.status(401).send(Json.createObjectBuilder()
+        Optional<String> tokenOpt = JwtUtil.getTokenFromRequest(req);
+
+        if (tokenOpt.isEmpty()) {
+            JsonObject response = Json.createObjectBuilder()
                     .add("status", "error")
-                    .add("message", "Unauthorized: Missing or invalid Authorization header")
-                    .build());
+                    .add("message", "Missing or invalid Authorization header")
+                    .build();
+            res.status(401).send(response);
             return;
         }
 
-        String token = authHeader.substring(7); // Remove "Bearer " prefix
+        String token = tokenOpt.get();
 
         boolean isValid = JwtUtil.verifyToken(token);
 

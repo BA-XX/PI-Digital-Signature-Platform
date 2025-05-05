@@ -9,9 +9,14 @@ import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import io.helidon.config.Config;
+import io.helidon.http.HeaderNames;
+import io.helidon.webserver.http.ServerRequest;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.Optional;
 
 public class JwtUtil {
 
@@ -78,5 +83,24 @@ public class JwtUtil {
         } catch (Exception e) {
             throw new RuntimeException("Invalid token", e);
         }
+    }
+
+    public static Optional<String> getTokenFromRequest(ServerRequest req) {
+
+        String authHeader = req.headers()
+                .first(HeaderNames.create("Authorization"))
+                .orElse("");
+
+        if (!authHeader.startsWith("Bearer ")) {
+            return Optional.empty();
+        }
+
+        String token = authHeader.substring("Bearer ".length()).trim();
+
+        if (token.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(token);
     }
 }

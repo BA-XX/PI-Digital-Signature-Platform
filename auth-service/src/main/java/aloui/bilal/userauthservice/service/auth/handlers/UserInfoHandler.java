@@ -4,7 +4,6 @@ import aloui.bilal.userauthservice.dao.IUserDao;
 import aloui.bilal.userauthservice.model.User;
 import aloui.bilal.userauthservice.security.JwtUtil;
 import com.nimbusds.jwt.JWTClaimsSet;
-import io.helidon.http.HeaderNames;
 import io.helidon.webserver.http.Handler;
 import io.helidon.webserver.http.ServerRequest;
 import io.helidon.webserver.http.ServerResponse;
@@ -13,19 +12,29 @@ import jakarta.json.JsonObject;
 
 import java.util.Optional;
 
-public class ProfileHandler implements Handler {
+public class UserInfoHandler implements Handler {
 
     private final IUserDao userDao;
 
-    public ProfileHandler(IUserDao userDao) {
+    public UserInfoHandler(IUserDao userDao) {
         this.userDao = userDao;
     }
 
     @Override
     public void handle(ServerRequest req, ServerResponse res) throws Exception {
 
-        String authHeader = req.headers().first(HeaderNames.create("Authorization")).orElse("Bearer ");
-        String token = authHeader.substring(7); // Remove "Bearer " prefix
+        Optional<String> tokenOpt = JwtUtil.getTokenFromRequest(req);
+
+        if (tokenOpt.isEmpty()) {
+            JsonObject response = Json.createObjectBuilder()
+                    .add("status", "error")
+                    .add("message", "Missing or invalid Authorization header")
+                    .build();
+            res.status(401).send(response);
+            return;
+        }
+
+        String token = tokenOpt.get();
 
         JWTClaimsSet claims;
 

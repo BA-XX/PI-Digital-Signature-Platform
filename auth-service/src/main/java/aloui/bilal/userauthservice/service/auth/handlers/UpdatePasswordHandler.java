@@ -25,10 +25,18 @@ public class UpdatePasswordHandler implements Handler {
     @Override
     public void handle(ServerRequest req, ServerResponse res) throws Exception {
 
-        String authHeader = req.headers().first(HeaderNames.create("Authorization")).orElse("Bearer ");
+        Optional<String> tokenOpt = JwtUtil.getTokenFromRequest(req);
 
-        String token = authHeader.substring(7); // Remove "Bearer " prefix
+        if (tokenOpt.isEmpty()) {
+            JsonObject response = Json.createObjectBuilder()
+                    .add("status", "error")
+                    .add("message", "Missing or invalid Authorization header")
+                    .build();
+            res.status(401).send(response);
+            return;
+        }
 
+        String token = tokenOpt.get();
         JWTClaimsSet claims;
         try {
             claims = JwtUtil.parseBody(token);

@@ -164,7 +164,76 @@ Authorization: Bearer <your_jwt_token>
 
 ---
 
-### `GET /auth/profile`
+### `GET /check-token`
+
+Checks the validity of a JWT access token.
+
+---
+
+**Headers:**
+
+* `Authorization: Bearer <JWT>` — Required
+
+---
+
+**Request Body:**
+
+* None
+
+---
+
+**Success Response (Valid Token):**
+
+* **Status Code:** `200 OK`
+* **Body:**
+
+```json
+{
+  "status": "success",
+  "valid": true,
+  "message": "Token is valid"
+}
+```
+
+---
+
+**Error Responses:**
+
+* **Missing or Malformed Authorization Header:**
+* **Status Code:** `401 Unauthorized`
+
+```json
+{
+  "status": "error",
+  "message": "Missing or invalid Authorization header"
+}
+```
+
+* **Invalid or Expired Token:**
+* **Status Code:** `401 Unauthorized`
+
+```json
+{
+  "status": "error",
+  "valid": false,
+  "message": "Token is invalid or expired"
+}
+```
+
+* **Internal Error During Token Verification:**
+* **Status Code:** `401 Unauthorized`
+
+```json
+{
+  "status": "error",
+  "valid": false,
+  "message": "Error verifying the token"
+}
+```
+
+---
+
+### `GET /auth/me`
 
 Retrieves the authenticated user's profile information.
 
@@ -235,7 +304,7 @@ Retrieves the authenticated user's profile information.
 
 ---
 
-### `GET /auth/login/history`
+### `GET /auth/login-history`
 
 Returns the authenticated user's login history, including IP address, user-agent, and timestamp.
 

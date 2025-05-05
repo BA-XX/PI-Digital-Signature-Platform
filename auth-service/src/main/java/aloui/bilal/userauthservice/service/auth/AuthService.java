@@ -30,10 +30,11 @@ public class AuthService implements HttpService {
                 .post("/register", new RegisterHandler(userDao))
                 .post("/login", new LoginHandler(userDao))
 
-                .get("/profile", new AuthMiddleware(), new ProfileHandler(userDao))
-                .get("/login/history", new AuthMiddleware(), new LoginHistoryHandler(loginHistoryDao))
+                .get("/me", new AuthMiddleware(), new UserInfoHandler(userDao))
+                .get("/login-history", new AuthMiddleware(), new LoginHistoryHandler(loginHistoryDao))
+                .get("/check-token", new AuthMiddleware(), new CheckTokenHandler())
 
-                .put("/update", new AuthMiddleware(), new UpdateProfileHandler(userDao))
+                .put("/update", new AuthMiddleware(), new UpdateUserInfoHandler(userDao))
                 .put("/update-password", new AuthMiddleware(), new UpdatePasswordHandler(userDao));
 
     }

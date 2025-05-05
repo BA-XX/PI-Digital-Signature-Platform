@@ -13,6 +13,7 @@ import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
 
 import java.util.List;
+import java.util.Optional;
 
 public class LoginHistoryHandler implements Handler {
     private final ILoginHistoryDao loginHistoryDao;
@@ -23,9 +24,19 @@ public class LoginHistoryHandler implements Handler {
 
     @Override
     public void handle(ServerRequest req, ServerResponse res) throws Exception {
-        // Extract user ID from the query param or path param (e.g., /history/{userId})
-        String authHeader = req.headers().first(HeaderNames.create("Authorization")).orElse("Bearer ");
-        String token = authHeader.substring(7); // Remove "Bearer " prefix
+
+        Optional<String> tokenOpt = JwtUtil.getTokenFromRequest(req);
+
+        if (tokenOpt.isEmpty()) {
+            JsonObject response = Json.createObjectBuilder()
+                    .add("status", "error")
+                    .add("message", "Missing or invalid Authorization header")
+                    .build();
+            res.status(401).send(response);
+            return;
+        }
+
+        String token = tokenOpt.get();
 
         JWTClaimsSet claims;
 
