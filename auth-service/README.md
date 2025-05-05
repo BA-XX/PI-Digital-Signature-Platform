@@ -104,7 +104,7 @@ Also logs the login attempt with the user's IP and user-agent.
 **Headers:**
 
 * `Content-Type: application/json`
-* `User-Agent: <user's browser or client>` (automatically sent)
+* `User-Agent: <user's browser or client>`
 * `X-Forwarded-For: <client IP>` (optional; defaults to `127.0.0.1` if missing)
 
 ---
@@ -170,18 +170,6 @@ Checks the validity of a JWT access token.
 
 ---
 
-**Headers:**
-
-* `Authorization: Bearer <JWT>` — Required
-
----
-
-**Request Body:**
-
-* None
-
----
-
 **Success Response (Valid Token):**
 
 * **Status Code:** `200 OK`
@@ -190,8 +178,7 @@ Checks the validity of a JWT access token.
 ```json
 {
   "status": "success",
-  "valid": true,
-  "message": "Token is valid"
+  "valid": true
 }
 ```
 
@@ -215,8 +202,7 @@ Checks the validity of a JWT access token.
 ```json
 {
   "status": "error",
-  "valid": false,
-  "message": "Token is invalid or expired"
+  "valid": false
 }
 ```
 
@@ -226,8 +212,7 @@ Checks the validity of a JWT access token.
 ```json
 {
   "status": "error",
-  "valid": false,
-  "message": "Error verifying the token"
+  "valid": false
 }
 ```
 
@@ -236,25 +221,6 @@ Checks the validity of a JWT access token.
 ### `GET /auth/me`
 
 Retrieves the authenticated user's profile information.
-
----
-
-**Headers:**
-
-* `Authorization: Bearer <JWT>` — Required
-
----
-
-**Authentication:**
-
-* Requires a valid JWT in the `Authorization` header.
-* Returns `401 Unauthorized` if the token is invalid or expired.
-
----
-
-**Request Body:**
-
-* None
 
 ---
 
@@ -310,19 +276,6 @@ Returns the authenticated user's login history, including IP address, user-agent
 
 ---
 
-**Headers:**
-
-* `Authorization: Bearer <JWT>` — Required
-
----
-
-**Authentication:**
-
-* A valid JWT must be provided in the `Authorization` header.
-* If the token is invalid or expired, the request is rejected with a 401 error.
-
----
-
 **Success Response:**
 
 * **Status Code:** `200 OK`
@@ -364,18 +317,6 @@ Updates the authenticated user's profile information (full name and organization
 
 ---
 
-**Headers:**
-
-* `Authorization: Bearer <JWT>` — Required
-
----
-
-**Authentication:**
-
-* A valid JWT is required in the `Authorization` header.
-* Returns a `401 Unauthorized` if the token is invalid or expired.
-
----
 
 **Request Body:**
 
@@ -442,19 +383,6 @@ Updates the authenticated user's profile information (full name and organization
 ### `PUT /auth/update-password`
 
 Allows an authenticated user to change their account password.
-
----
-
-**Headers:**
-
-* `Authorization: Bearer <JWT>` — Required
-
----
-
-**Authentication:**
-
-* A valid JWT is required in the `Authorization` header.
-* Returns `401 Unauthorized` if the token is invalid or expired.
 
 ---
 
